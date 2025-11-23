@@ -1,111 +1,118 @@
 # Simple Workforce Manager
 
-A web-based workforce management system for small businesses.
+A comprehensive web-based workforce management system for small to medium businesses, built with the PERN stack (PostgreSQL, Express, React, Node.js).
 
-**Built with:** React, Node.js, PostgreSQL, Socket.io  
-**Version:** 1.0.0
+**Version:** 1.1.0  
+**Status:** ✅ Production Ready  
+**Built with:** React 19, Node.js 18+, PostgreSQL 13+, Socket.io
 
 ---
 
-## Table of Contents
+## 📋 Table of Contents
 
 1. [Features](#features)
 2. [Prerequisites](#prerequisites)
-3. [Installation & Setup](#installation--setup)
-4. [Running the Application](#running-the-application)
-5. [Login Credentials](#login-credentials)
-6. [Demo Flow](#demo-flow)
-7. [Technologies Used](#technologies-used)
-8. [Project Structure](#project-structure)
-9. [Technical Implementation](#technical-implementation)
-10. [Troubleshooting](#troubleshooting)
+3. [Quick Start](#quick-start)
+4. [Configuration](#configuration)
+5. [Running the Application](#running-the-application)
+6. [Default Credentials](#default-credentials)
+7. [User Roles](#user-roles)
+8. [Technologies](#technologies)
+9. [Project Structure](#project-structure)
+10. [Mobile Access](#mobile-access)
+11. [Deployment](#deployment)
+12. [Troubleshooting](#troubleshooting)
+13. [Documentation](#documentation)
 
 ---
 
-## Features
+## ✨ Features
 
-### User Management
-- Admin can create, edit, and delete users
-- Three user roles: Admin, Manager, Staff
-- Profile management for all users
+### Core Functionality
+- **User Management** - Create, edit, delete users with role-based access (Admin, Manager, Staff)
+- **Task Management** - Assign tasks, track status (Pending, In Progress, Completed), set due dates
+- **Attendance System** - Clock in/out with automatic timestamps, view attendance history
+- **Real-Time Chat** - Instant messaging with WebSocket, search users, block/unblock conversations
+- **Reports & Complaints** - Submit daily reports, complaint system with threaded replies
+- **Feedback System** - Staff feedback submission with management responses
+- **Allowances Management** - Track employee allowances with different frequencies
+- **Profile Management** - Self-service profile updates for all users
 
-### Task Management
-- Create and assign tasks to staff
-- Track task status (Pending, In Progress, Completed)
-- Set due dates for tasks
+### Security Features
+- ✅ BCrypt password hashing (10 salt rounds)
+- ✅ JWT authentication (1-hour token expiration)
+- ✅ Rate limiting (5 login attempts per 15 minutes)
+- ✅ API rate limiting (100 requests per minute per IP)
+- ✅ SQL injection prevention (parameterized queries)
+- ✅ Role-based access control
+- ✅ HTTP request logging with morgan
 
-### Attendance System
-- Staff can clock in and clock out
-- Automatic timestamp recording
-- View attendance history
-
-### Real-Time Chat
-- Instant messaging between users
-- Search users to start conversations
-- Block/unblock conversations
-- Clear chat history
-
-### Reports & Complaints
-- Staff can submit daily reports
-- Complaint system with admin replies
-- Feedback submission and responses
-
-### Allowances
-- Manage employee allowances
-- Different frequency options (monthly, one-time, etc.)
-
-### Security
-- Password encryption with BCrypt
-- JWT authentication
-- Role-based access control
-- Secure API endpoints
+### Performance Features
+- ✅ 29 database indexes for optimal query performance (10-100x faster)
+- ✅ Connection pool optimization (max: 20, min: 5 connections)
+- ✅ Efficient query optimization
+- ✅ Real-time WebSocket communication
 
 ---
 
-## Prerequisites
+## 📦 Prerequisites
 
-Install these before running the project:
+Before installation, ensure you have:
 
-1. **Node.js** (version 18 or higher) - [Download](https://nodejs.org)
-2. **PostgreSQL** (version 13 or higher) - [Download](https://www.postgresql.org/download/)
+1. **Node.js** 18.0.0 or higher - [Download](https://nodejs.org)
+2. **PostgreSQL** 13.0 or higher - [Download](https://www.postgresql.org/download/)
 3. **Git** - [Download](https://git-scm.com)
 
+**System Requirements:**
+- RAM: 8GB minimum (16GB recommended)
+- Storage: 20GB available space
+- OS: Windows 10+, macOS 11+, or Linux (Ubuntu 20.04+)
+
 ---
 
-## Installation & Setup
+## 🚀 Quick Start
 
-### Step 1: Clone the Project
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/kisswh0re/SimpleWorkforceManager.git
 cd SimpleWorkforceManager
 ```
 
-### Step 2: Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 # Backend
 cd backend
 npm install
 
-# Frontend (open new terminal)
+# Frontend (new terminal)
 cd frontend
 npm install
 ```
 
-### Step 3: Setup Database
-
-Open PostgreSQL and create a database:
+### 3. Setup Database
 
 ```bash
+# Create database
 psql -U postgres
 CREATE DATABASE simple_workforce_manager;
 \q
+
+# Initialize schema and create 29 performance indexes
+cd backend
+node setupDatabase.js
+
+# Create default admin account
+node seedAdmin.js
+
+# Verify setup
+node verifySetup.js
 ```
 
-### Step 4: Configure Environment Variables
+### 4. Configure Environment
 
-**Create `backend/.env`:**
+**Backend (`backend/.env`):**
 ```ini
 PORT=5001
 DB_USER=postgres
@@ -113,268 +120,409 @@ DB_HOST=localhost
 DB_DATABASE=simple_workforce_manager
 DB_PASSWORD=your_postgres_password
 DB_PORT=5432
-JWT_SECRET=your_secret_key_here
+JWT_SECRET=your_secure_random_string_min_32_chars
 CORS_ORIGIN=http://localhost:3000
 FRONTEND_URL=http://localhost:3000
+
+# Optional: SMTP for password reset
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
 ```
 
-**Create `frontend/.env`:**
+**Frontend (`frontend/.env`):**
 ```ini
 REACT_APP_API_URL=http://localhost:5001/api
 ```
 
-### Step 5: Initialize Database
+### 5. Start Application
 
 ```bash
-cd backend
-node setupDatabase.js
-node seedAdmin.js
-```
-
----
-
-## Running the Application
-
-### Start Backend (Terminal 1)
-
-```bash
+# Terminal 1 - Backend
 cd backend
 node index.js
-```
 
-✅ You should see: `Server running on http://localhost:5001`
-
-### Start Frontend (Terminal 2)
-
-```bash
+# Terminal 2 - Frontend
 cd frontend
 npm start
 ```
 
-✅ Browser will open automatically at `http://localhost:3000`
+✅ **Backend:** http://localhost:5001  
+✅ **Frontend:** http://localhost:3000 (opens automatically)
 
-**Estimated Setup Time:** 5-10 minutes
+**Setup Time:** 5-10 minutes
 
 ---
 
-## Login Credentials
+## 🔐 Default Credentials
 
-**Default Admin Account:**
+**Admin Account:**
 - Username: `admin`
 - Password: `admin`
 
-⚠️ **Important:** Change the password after first login!
-
-### User Roles
-
-1. **Admin** - Full system access, manage users, system settings
-2. **Manager** - Manage tasks, view reports, handle complaints, view attendance
-3. **Staff** - View own tasks, clock in/out, submit reports, use chat
+⚠️ **IMPORTANT:** Change password immediately after first login!
 
 ---
 
-## Demo Flow
+## 👥 User Roles
 
-### Getting Started
+### Admin
+- Full system access
+- User management (create, edit, delete)
+- System settings configuration
+- View all reports, complaints, feedback
+- Manage allowances
 
-1. **Login as Admin**
-   - Access: `http://localhost:3000`
-   - Login with admin/admin
-   - Navigate to "Manage Staff"
-   - Create a Manager user
-   - Create a Staff user
+### Manager
+- Task assignment and management
+- Attendance monitoring (all staff)
+- View and respond to reports
+- Handle complaints and feedback
+- Manage allowances
+- Real-time chat
 
-2. **Test Manager Features**
-   - Logout and login as Manager
-   - Go to "Manage Tasks"
-   - Create a task and assign to Staff
-   - View attendance records
-   - Check reports and complaints
-
-3. **Test Staff Features**
-   - Logout and login as Staff
-   - View "My Tasks" and update status
-   - Use Clock In/Out feature
-   - Submit a report
-   - Submit a complaint
-
-4. **Test Real-Time Chat**
-   - Open two browser windows (or use incognito)
-   - Login as different users in each window
-   - Navigate to Chat
-   - Send messages and see real-time updates
+### Staff
+- View and update assigned tasks
+- Clock in/out for attendance
+- Submit reports, complaints, feedback
+- View personal allowances
+- Real-time chat
+- Profile management
 
 ---
 
-## Technologies Used
+## 🛠️ Technologies
 
 ### Frontend
-- **React 19** - UI framework
-- **Ant Design** - UI component library
-- **Socket.io-client** - Real-time communication
-- **Axios** - HTTP client for API calls
-- **React Router** - Navigation
+- **React 19.2.0** - UI framework with Hooks
+- **Ant Design 5.28.0** - UI component library
+- **Socket.io-client 4.8.1** - Real-time communication
+- **Axios 1.13.1** - HTTP client
+- **React Router DOM 7.9.5** - Client-side routing
+- **Moment 2.30.1** - Date/time formatting
 
 ### Backend
-- **Node.js & Express** - Server framework
-- **PostgreSQL** - Relational database
-- **Socket.io** - WebSocket for real-time features
-- **JWT** - Authentication tokens
-- **BCrypt** - Password hashing
+- **Node.js 18+** - JavaScript runtime
+- **Express 5.1.0** - Web framework
+- **PostgreSQL 13+** - Relational database
+- **Socket.io 4.8.1** - WebSocket server
+- **JWT 9.0.2** - Authentication tokens
+- **BCrypt 6.0.0** - Password hashing
+- **Morgan 1.10.1** - HTTP logging
+- **Express-rate-limit 8.2.1** - Rate limiting
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 SimpleWorkforceManager/
-├── backend/                    # Server-side application
-│   ├── routes/                # API endpoints
-│   │   ├── auth.js           # Authentication routes
+├── backend/                    # Server application
+│   ├── routes/                # API endpoints (11 modules)
+│   │   ├── auth.js           # Authentication
+│   │   ├── staff.js          # User management
 │   │   ├── tasks.js          # Task management
 │   │   ├── attendance.js     # Attendance tracking
-│   │   ├── chat.js           # Chat functionality
-│   │   └── ...               # Other routes
-│   ├── middleware/            # Custom middleware
-│   │   └── auth.js           # JWT authentication
+│   │   ├── chat.js           # Real-time chat
+│   │   ├── reports.js        # Report submission
+│   │   ├── complaints.js     # Complaint system
+│   │   ├── feedback.js       # Feedback system
+│   │   ├── allowances.js     # Allowance management
+│   │   ├── profile.js        # Profile management
+│   │   └── settings.js       # System settings
+│   ├── middleware/            # Authentication middleware
 │   ├── utils/                 # Helper functions
-│   ├── constants.js           # Application constants
-│   ├── db.js                  # Database connection
+│   ├── .env.example           # Environment template
 │   ├── index.js               # Server entry point
-│   ├── setupDatabase.js       # Database schema setup
-│   └── seedAdmin.js           # Create default admin
+│   ├── db.js                  # Database connection
+│   ├── setupDatabase.js       # Schema + 29 indexes
+│   ├── seedAdmin.js           # Create admin
+│   ├── addIndexes.js          # Add indexes to existing DB
+│   └── verifySetup.js         # Verify installation
 │
-├── frontend/                   # Client-side application
-│   ├── public/                # Static files
+├── frontend/                   # Client application
 │   ├── src/
 │   │   ├── components/        # Reusable components
-│   │   │   ├── Login.js
-│   │   │   ├── ProtectedRoute.js
-│   │   │   └── ClockInWidget.js
 │   │   ├── pages/             # Page components
-│   │   │   ├── DashboardPage.js
-│   │   │   ├── MyTasksPage.js
-│   │   │   ├── ChatPage.js
-│   │   │   └── ...
 │   │   ├── utils/             # Helper functions
-│   │   ├── api.js             # Axios configuration
+│   │   ├── api.js             # Axios config
 │   │   ├── socket.js          # Socket.io client
-│   │   ├── App.js             # Main app component
-│   │   └── index.js           # Entry point
+│   │   └── App.js             # Main component
+│   ├── .env.example           # Environment template
 │   └── package.json
 │
-├── .gitignore
+├── SRS/                        # Software Requirements Specification
+│   ├── 1.1 Overall Description.md
+│   ├── 1.2 External Interface Requirements.md
+│   ├── 1.3 Functional Requirements.md
+│   ├── 1.4 Performance Requirements.md
+│   ├── 1.5 Design Constraints.md
+│   ├── 1.6 Data Flow Diagrams.md
+│   ├── 1.7 System Features.md
+│   ├── 1.8 System Flow.md
+│   ├── 1.9 Use Cases.md
+│   └── README.md              # SRS navigation
+│
 └── README.md                   # This file
 ```
 
 ---
 
-## Technical Implementation
+## 📱 Mobile Access
 
-### Backend Architecture
+### Access from Mobile Devices (LAN)
 
-**RESTful API Design:**
-- Organized route handlers by feature
-- Consistent error handling
-- Input validation on all endpoints
+1. **Find Server IP Address:**
+   ```bash
+   # Windows
+   ipconfig
+   
+   # macOS/Linux
+   ifconfig
+   # or
+   ip addr show
+   ```
 
-**Authentication & Authorization:**
-- JWT-based stateless authentication
-- Role-based middleware for access control
-- Secure password hashing with BCrypt
+2. **Update Frontend Configuration:**
+   ```ini
+   # frontend/.env
+   REACT_APP_API_URL=http://YOUR_SERVER_IP:5001/api
+   ```
 
-**Database Design:**
-- Normalized PostgreSQL schema
-- Foreign key constraints for data integrity
-- Proper indexing for performance
-- Transaction support for critical operations
+3. **Update Backend CORS:**
+   ```ini
+   # backend/.env
+   CORS_ORIGIN=http://YOUR_SERVER_IP:3000
+   ```
 
-**Real-Time Features:**
-- WebSocket connection with Socket.io
-- User authentication for socket connections
-- Real-time message delivery
-- Connection state management
+4. **Access from Mobile:**
+   - Open browser on mobile device
+   - Navigate to: `http://YOUR_SERVER_IP:3000`
+   - Login with credentials
 
-### Frontend Architecture
-
-**Component Structure:**
-- Functional components with React Hooks
-- Protected routes based on user roles
-- Reusable UI components
-- Centralized state management
-
-**API Communication:**
-- Axios interceptors for authentication
-- Consistent error handling
-- Loading states for better UX
-
-**Real-Time Updates:**
-- Socket.io client integration
-- Automatic reconnection handling
-- Real-time message notifications
-
-### Security Features
-
-✅ **Password Security:** BCrypt hashing with salt  
-✅ **Authentication:** JWT tokens with expiration  
-✅ **Authorization:** Role-based access control  
-✅ **SQL Injection Prevention:** Parameterized queries  
-✅ **XSS Prevention:** React auto-escaping  
-✅ **CORS Configuration:** Controlled origin access
+**Note:** Ensure both devices are on the same network and firewall allows connections.
 
 ---
 
-## Troubleshooting
+## 🚀 Deployment
 
-### Database Connection Error
+### Production Setup
+
+```bash
+# 1. Setup environment files
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+# Edit .env files with production values
+
+# 2. Initialize database
+cd backend
+node setupDatabase.js && node seedAdmin.js
+
+# 3. Build and deploy with PM2
+cd ../frontend && npm run build
+npm install -g pm2
+cd ../backend && pm2 start index.js --name swm-backend
+cd ../frontend/build && pm2 serve . 3000 --name swm-frontend --spa
+pm2 save && pm2 startup
+```
+
+⚠️ **Security:** Change default admin password, use strong JWT_SECRET, enable HTTPS
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Database Connection Error
 **Problem:** Can't connect to PostgreSQL  
 **Solution:**
-- Ensure PostgreSQL is running: `sudo systemctl status postgresql` (Linux) or check Services (Windows)
+- Check PostgreSQL is running: `sudo systemctl status postgresql` (Linux) or Services (Windows)
 - Verify database exists: `psql -U postgres -l`
 - Check credentials in `backend/.env`
+- Ensure PostgreSQL is listening on correct port (default: 5432)
 
-### Port Already in Use
+#### Port Already in Use
 **Problem:** Port 5001 or 3000 is already in use  
 **Solution:**
-- Change `PORT` in `backend/.env` to a different number (e.g., 5002)
-- Update `REACT_APP_API_URL` in `frontend/.env` accordingly
-- Or kill the process using the port
+```bash
+# Find process using port
+lsof -i :5001  # macOS/Linux
+netstat -ano | findstr :5001  # Windows
 
-### Can't Login
-**Problem:** Login fails with admin/admin  
+# Kill process or change port in .env files
+```
+
+#### Login Fails
+**Problem:** Can't login with admin/admin  
 **Solution:**
-- Make sure you ran `node seedAdmin.js`
-- Check if database tables exist: `psql -U postgres -d simple_workforce_manager -c "\dt"`
-- Try running `node setupDatabase.js` again
+- Verify `seedAdmin.js` was executed
+- Check database tables exist: `psql -U postgres -d simple_workforce_manager -c "\dt"`
+- Re-run setup: `node setupDatabase.js && node seedAdmin.js`
 
-### Frontend Can't Connect to Backend
+#### Frontend Can't Connect to Backend
 **Problem:** API calls fail  
 **Solution:**
-- Verify backend is running (check Terminal 1)
+- Verify backend is running (check terminal)
 - Check `REACT_APP_API_URL` in `frontend/.env`
 - Ensure `CORS_ORIGIN` in `backend/.env` matches frontend URL
-- Clear browser cache and restart frontend
+- Clear browser cache and restart
 
-### WebSocket Connection Issues
-**Problem:** Chat doesn't work in real-time  
+#### WebSocket/Chat Not Working
+**Problem:** Real-time chat doesn't work  
 **Solution:**
 - Check browser console for errors
-- Verify backend Socket.io is running
-- Ensure firewall isn't blocking WebSocket connections
+- Verify Socket.io is running (backend logs)
+- Ensure firewall allows WebSocket connections
+- Check network allows WebSocket protocol
+
+#### Slow Performance
+**Problem:** Queries are slow  
+**Solution:**
+- Verify indexes were created: `node backend/verifySetup.js`
+- Run `node backend/addIndexes.js` if upgrading from older version
+- Check database has sufficient resources
+- Monitor with: `psql -U postgres -d simple_workforce_manager -c "SELECT * FROM pg_stat_activity;"`
+
+### Verification Commands
+
+```bash
+# Check system health
+cd backend
+node verifySetup.js
+
+# Check database
+psql -U postgres -d simple_workforce_manager -c "SELECT COUNT(*) FROM users;"
+
+# Check PM2 processes
+pm2 status
+pm2 logs swm-backend
+
+# Check disk space
+df -h
+
+# Check memory
+free -h
+```
 
 ---
 
-## Contributing
+## 📚 Documentation
 
-Contributions are welcome! Feel free to submit issues or pull requests.
+### Software Requirements Specification
+
+The `SRS/` folder contains comprehensive software requirements specification:
+
+1. **[1.1 Overall Description](SRS/1.1%20Overall%20Description.md)** - System overview, technology stack, user roles
+2. **[1.2 External Interface Requirements](SRS/1.2%20External%20Interface%20Requirements.md)** - API specifications, hardware/software interfaces
+3. **[1.3 Functional Requirements](SRS/1.3%20Functional%20Requirements.md)** - Detailed functional specifications
+4. **[1.4 Performance Requirements](SRS/1.4%20Performance%20Requirements.md)** - Response times, scalability, resource utilization
+5. **[1.5 Design Constraints](SRS/1.5%20Design%20Constraints.md)** - Technology constraints, platform requirements
+6. **[1.6 Data Flow Diagrams](SRS/1.6%20Data%20Flow%20Diagrams.md)** - System data flows and architecture
+7. **[1.7 System Features](SRS/1.7%20System%20Features.md)** - Detailed feature descriptions
+8. **[1.8 System Flow](SRS/1.8%20System%20Flow.md)** - End-to-end process flows
+9. **[1.9 Use Cases](SRS/1.9%20Use%20Cases.md)** - 16 comprehensive use cases
+
+### Quick Reference
+
+**API Endpoints:**
+- Authentication: `/api/auth/*`
+- User Management: `/api/staff/*`
+- Tasks: `/api/tasks/*`
+- Attendance: `/api/attendance/*`
+- Chat: `/api/chat/*`
+- Reports: `/api/reports/*`
+- Complaints: `/api/complaints/*`
+- Feedback: `/api/feedback/*`
+- Allowances: `/api/allowances/*`
+- Profile: `/api/profile/*`
+- Settings: `/api/settings/*`
+
+**Database Tables:**
+- users, user_profiles
+- tasks, attendance
+- messages, conversations
+- reports, complaints, complaint_replies
+- feedback, allowances
+- system_settings
+
+**Performance Indexes:** 29 indexes automatically created for optimal query performance
 
 ---
 
-## Support
+## 🤝 Contributing
 
-For issues or questions, please open an issue on GitHub.
+Contributions are welcome! Please feel free to submit issues or pull requests.
 
 ---
 
-**Tested On:** Windows 10/11, macOS, Ubuntu Linux  
-**Recommended Browser:** Google Chrome, Mozilla Firefox
+## 📄 License
+
+This project is open source and available for use.
+
+---
+
+## 📞 Support
+
+For issues, questions, or feature requests:
+- Open an issue on GitHub
+- Review the [SRS Documentation](SRS/README.md)
+- Check [Troubleshooting](#troubleshooting) section
+
+---
+
+## 🎯 Quick Commands Reference
+
+```bash
+# Setup
+npm install                    # Install dependencies
+node setupDatabase.js          # Initialize database + indexes
+node seedAdmin.js              # Create admin account
+node verifySetup.js            # Verify installation
+
+# Development
+node index.js                  # Start backend
+npm start                      # Start frontend (in frontend/)
+
+# Production
+npm run build                  # Build frontend
+pm2 start index.js             # Start with PM2
+pm2 logs                       # View logs
+pm2 restart all                # Restart services
+
+# Database
+pg_dump -U postgres simple_workforce_manager > backup.sql  # Backup
+psql -U postgres simple_workforce_manager < backup.sql     # Restore
+node addIndexes.js             # Add performance indexes
+
+# Maintenance
+pm2 status                     # Check status
+pm2 monit                      # Monitor resources
+pm2 save                       # Save configuration
+```
+
+---
+
+**Version:** 1.1.0  
+**Status:** ✅ Production Ready  
+**Last Updated:** November 24, 2025  
+**Tested On:** Windows 10/11, macOS 11+, Ubuntu 20.04+  
+**Recommended Browsers:** Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+
+---
+
+## 🎯 Quick Start Commands
+
+```bash
+# Verify deployment readiness
+./verify-deployment.sh
+
+# Setup environment
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+
+# Initialize and run
+cd backend && npm install && node setupDatabase.js && node seedAdmin.js
+cd ../frontend && npm install && npm start
+```

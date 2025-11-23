@@ -5,6 +5,8 @@ const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
+const morgan = require("morgan");
 const { Server } = require("socket.io");
 const { authenticateToken, checkRole } = require("./middleware/auth");
 
@@ -33,6 +35,34 @@ const io = new Server(server, {
 // Middleware
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:3000" }));
 app.use(express.json());
+
+// HTTP request logging
+if (process.env.NODE_ENV === 'production') {
+  app.use(morgan('combined')); // Apache combined log format for production
+} else {
+  app.use(morgan('dev')); // Concise colored output for development
+}
+
+// Rate limiting configuration
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per window
+  message: { message: "Too many login attempts, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // 100 requests per minute per IP
+  message: { message: "Too many requests, please try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiters
+app.use("/api/auth/login", loginLimiter);
+app.use("/api/", apiLimiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -136,6 +166,7 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
